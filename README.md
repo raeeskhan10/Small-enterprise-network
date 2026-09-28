@@ -2,6 +2,10 @@
 
 A Cisco Packet Tracer project that simulates a small enterprise network using VLAN segmentation, VLSM subnetting, inter-VLAN routing, centralized network services, access control, and NAT/PAT.
 
+## Network Topology
+
+![Small Enterprise Network Topology](images/network-topology.png)
+
 ## Project Overview
 
 The goal of this project was to design, configure, and troubleshoot a functional enterprise-style network while applying core networking concepts in a hands-on environment.
