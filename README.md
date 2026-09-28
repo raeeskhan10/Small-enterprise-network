@@ -4,7 +4,7 @@ A Cisco Packet Tracer project that simulates a small enterprise network using VL
 
 ## Network Topology
 
-![Small Enterprise Network Topology](images/network-topology.png)
+![Small Enterprise Network Topology](images/network-topology.png.png)
 
 ## Project Overview
 
