@@ -1,89 +1,116 @@
 # Small Enterprise Network
 
-A Cisco Packet Tracer lab designed to simulate a small enterprise network using VLAN segmentation, VLSM subnetting, 802.1Q trunking, and inter-VLAN routing.
+A Cisco Packet Tracer project that simulates a small enterprise network using VLAN segmentation, VLSM subnetting, inter-VLAN routing, centralized network services, access control, and NAT/PAT.
 
-## Project Objectives
+## Project Overview
 
-The goal of this project is to build and configure a functional enterprise-style network while practicing core networking concepts and troubleshooting.
+The goal of this project was to design, configure, and troubleshoot a functional enterprise-style network while applying core networking concepts in a hands-on environment.
 
-The network is being built in stages and will eventually include:
+The completed network includes:
 
-- VLAN segmentation
 - VLSM subnetting
-- 802.1Q trunking
+- VLAN segmentation
 - Access port configuration
+- 802.1Q trunking
 - Inter-VLAN routing
 - DHCP
+- DHCP relay
 - DNS
-- ACLs
-- NAT
-- Network troubleshooting
+- Extended ACLs
+- Static and default routing
+- NAT/PAT
+- Simulated ISP connectivity
+- Network troubleshooting and verification
 
-## Current Network Design
+## Network Design
 
-The network currently uses a Cisco 3560 multilayer switch as the core switch and Cisco 2960 switches at the access layer.
+A Cisco 3560 multilayer switch (`CORE-SW1`) provides Layer 3 routing between the internal VLANs.
 
-Departments are separated into VLANs:
+Cisco 2960 access switches provide connectivity for the Engineering, Sales, HR, and Management departments.
 
-| VLAN | Department | Network |
-|------|------------|---------|
-| 10 | Engineering | 10.10.0.0/25 |
-| 20 | Sales | 10.10.0.128/26 |
-| 30 | HR | 10.10.0.192/27 |
-| 40 | Management | 10.10.0.224/28 |
-| 50 | Servers | 10.10.0.240/28 |
+A dedicated server VLAN hosts centralized DHCP and DNS services.
 
-## Inter-VLAN Routing
+`EDGE-R1` connects the internal enterprise network to a simulated ISP and performs NAT/PAT for internal clients.
 
-CORE-SW1 performs Layer 3 routing between the VLANs using Switch Virtual Interfaces (SVIs).
+## VLAN and IP Addressing
 
-The first usable address of each subnet is used as the default gateway.
+| VLAN | Department | Network | Default Gateway |
+|---|---|---|---|
+| 10 | Engineering | 10.10.0.0/25 | 10.10.0.1 |
+| 20 | Sales | 10.10.0.128/26 | 10.10.0.129 |
+| 30 | HR | 10.10.0.192/27 | 10.10.0.193 |
+| 40 | Management | 10.10.0.224/28 | 10.10.0.225 |
+| 50 | Servers | 10.10.0.240/28 | 10.10.0.241 |
 
-| VLAN | Default Gateway |
-|------|-----------------|
-| 10 | 10.10.0.1 |
-| 20 | 10.10.0.129 |
-| 30 | 10.10.0.193 |
-| 40 | 10.10.0.225 |
+## Network Services
 
-Inter-VLAN connectivity has been successfully tested using ICMP ping.
+### DHCP
 
-## Troubleshooting
+A centralized DHCP server (`10.10.0.242`) provides dynamic IPv4 addressing to client VLANs.
 
-During configuration and testing, I encountered and resolved several issues, including:
+Because the DHCP server resides in VLAN 50, DHCP relay was configured on the client VLAN SVIs using `ip helper-address`.
 
-- Incorrect physical interface selection when configuring trunk links
-- Incorrect SVI addressing during initial configuration
-- Incorrect endpoint IP addressing that prevented local and inter-VLAN communication
+### DNS
 
-These issues were identified using Cisco IOS verification commands and connectivity testing.
+The same server provides internal DNS services.
 
-## Documentation
+A DNS A record maps:
 
-Detailed project documentation is available in the `documentation` folder:
+`server.company.local → 10.10.0.242`
 
-- `ip-addressing.md` — VLSM addressing plan
-- `network-configuration.md` — VLAN, trunking, SVI, and routing configuration
+Name resolution was successfully tested from client devices.
 
-The Cisco Packet Tracer project file is available in the `packet-tracer` folder.
+## Network Security
 
-## Project Status
+An extended ACL named `SALES-RESTRICTIONS` prevents devices in the Sales VLAN from accessing the HR VLAN while allowing other permitted traffic.
 
-**In Progress**
+Testing confirmed that Sales-to-HR communication was blocked while access to other permitted networks remained functional.
 
-Completed:
-- VLSM addressing plan
-- VLAN creation
-- Access port assignments
-- 802.1Q trunk configuration
-- SVI configuration
+## Edge Routing and NAT/PAT
+
+`CORE-SW1` connects to `EDGE-R1` using the `10.10.1.0/30` point-to-point network.
+
+`EDGE-R1` connects to the simulated ISP using `203.0.113.0/30`.
+
+PAT overload allows multiple internal private IPv4 addresses to share the outside address `203.0.113.1`.
+
+NAT translations were verified using Cisco IOS commands.
+
+## Testing and Verification
+
+The completed network was tested for:
+
+- DHCP address assignment
+- Default gateway connectivity
 - Inter-VLAN routing
-- Basic connectivity testing
+- DNS name resolution
+- Server connectivity
+- ACL enforcement
+- Edge-router connectivity
+- Simulated ISP connectivity
+- NAT/PAT translation
 
-Next:
-- Server infrastructure
-- DHCP
-- DNS
-- ACL implementation
-- NAT
-- Additional testing and troubleshooting
+All planned connectivity and security tests were successfully completed.
+
+## Troubleshooting Experience
+
+Several configuration issues were identified and resolved during the project, including:
+
+- Incorrect physical interfaces used for trunk configuration
+- Incorrect SVI addressing
+- Incorrect endpoint IP addressing
+- DHCP relay requirements across VLAN boundaries
+- ACL placement and direction during Packet Tracer testing
+
+Troubleshooting was performed using connectivity tests and Cisco IOS verification commands.
+
+## Repository Structure
+
+```text
+Small-enterprise-network/
+├── documentation/
+│   ├── ip-addressing.md
+│   └── network-configuration.md
+├── packet-tracer/
+│   └── Small-Enterprise-Network.pkt
+└── README.md
